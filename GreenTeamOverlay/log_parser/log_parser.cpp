@@ -1,8 +1,7 @@
 #include "log_parser.h"
-
 #include <numeric>
-
 #include "../utils/utils.h"
+
 namespace Green
 {
 

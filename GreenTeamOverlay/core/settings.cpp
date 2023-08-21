@@ -1,8 +1,6 @@
 #include "settings.h"
 #include <filesystem>
 #include <Windows.h>
-#include <iostream>
-
 #include "../utils/utils.h""
 
 #define APP_SETTINGS_FILE_NAME "settings.json"

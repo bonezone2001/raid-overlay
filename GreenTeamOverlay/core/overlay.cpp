@@ -1,12 +1,10 @@
 #include "overlay.h"
+#include <iostream>
+#include "../utils/utils.h"
 
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
-
-#include <iostream>
-#include <ostream>
-#include "../utils/utils.h"
 
 #include "font.h"
 #include "../imgui/imgui.h"
