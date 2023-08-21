@@ -33,7 +33,7 @@ EchoFight::EchoFight(HWND wowWindow) :
 		std::lock_guard lock(listMutex);
 		volcanicHeartPlayers.clear();
 		activeDestruction = false;
-		std::cout << "Clearing volcanic heart players" << std::endl;
+		DEBUG_PRINTLN("Clearing volcanic heart players");
 	});
 
 	logParser->subscribe(std::vector<std::wstring>{L"SPELL_AURA_APPLIED", L"SPELL_AURA_REMOVED"}, [this](const EventData& data) {
@@ -90,21 +90,15 @@ EchoFight::EchoFight(HWND wowWindow) :
 		Utils::RegexSplit(data.eventData, std::wregex(L","), std::back_inserter(tokens));
 		if (tokens.size() < 10) return;
 
-		const auto& casterName = tokens[2];
+		//const auto& casterName = tokens[2];
 		const auto& spellName = tokens[10];
 
 		if (spellName == L"\"Ebon Destruction\"")
 		{
 			if (data.eventType == L"SPELL_CAST_START")
-			{
-				std::cout << "START" << std::endl;
 				activeDestruction = true;
-			}
 			else
-			{
-				std::cout << "STOP" << std::endl;
 				activeDestruction = false;
-			}
 		}
 	});
 }

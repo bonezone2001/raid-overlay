@@ -126,7 +126,7 @@ namespace Green::Utils
 			throw std::runtime_error("WideCharToMultiByte failed");
 
 		std::string utf8Str(sizeNeeded, 0);
-		if (WideCharToMultiByte(CP_UTF8, 0, wStr.c_str(), static_cast<int>(wStr.size()), &utf8Str[0], sizeNeeded, nullptr, nullptr) == 0)
+		if (WideCharToMultiByte(CP_UTF8, 0, wStr.c_str(), static_cast<int>(wStr.size()), utf8Str.data(), sizeNeeded, nullptr, nullptr) == 0)
 			throw std::runtime_error("WideCharToMultiByte failed");
 
 		return utf8Str;
@@ -140,7 +140,7 @@ namespace Green::Utils
 			throw std::runtime_error("MultiByteToWideChar failed");
 
 		std::wstring wStr(sizeNeeded, 0);
-		if (MultiByteToWideChar(CP_UTF8, 0, utf8Str.c_str(), static_cast<int>(utf8Str.size()), &wStr[0], sizeNeeded) == 0) {
+		if (MultiByteToWideChar(CP_UTF8, 0, utf8Str.c_str(), static_cast<int>(utf8Str.size()), wStr.data(), sizeNeeded) == 0) {
 			throw std::runtime_error("MultiByteToWideChar failed");
 		}
 
@@ -180,7 +180,7 @@ namespace Green::Utils
 		// Restart the application
 		STARTUPINFO info = { sizeof(info) };
 		PROCESS_INFORMATION processInfo;
-		if (CreateProcess(nullptr, const_cast<LPWSTR>(GetCommandLineW()), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &info, &processInfo))
+		if (CreateProcess(nullptr, GetCommandLineW(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &info, &processInfo))
 		{
 			CloseHandle(processInfo.hProcess);
 			CloseHandle(processInfo.hThread);

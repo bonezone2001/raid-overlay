@@ -180,7 +180,7 @@ bool DownloadUpdateFile()
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
 
         const CURLcode res = curl_easy_perform(curl);
-        fclose(fp);
+        (void)fclose(fp);
         curl_easy_cleanup(curl);
         if (res != CURLE_OK) {
             DEBUG_PRINTLN("Error while downloading update: " << curl_easy_strerror(res));
