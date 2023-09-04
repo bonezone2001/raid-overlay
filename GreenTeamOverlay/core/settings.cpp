@@ -43,11 +43,7 @@ bool Settings::loadSettings(const std::string& path)
 
 void Settings::load()
 {
-	if (createIfMissing(APP_SETTINGS_FILE_NAME))
-	{
-		MessageBox(NULL, L"Settings file created. Please edit it!", L"BrainRot", MB_OK | MB_ICONINFORMATION);
-		exit(0);
-	}
+	(void)createIfMissing(APP_SETTINGS_FILE_NAME);
 	loadSettings(APP_SETTINGS_FILE_NAME);
 }
 
