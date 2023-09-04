@@ -18,17 +18,12 @@ EchoFight::EchoFight(const HWND wowWindow) :
 	destructionIndex(0)
 {
 	const auto& settings = Settings::getInstance();
-	playerOrder = settings.echo_player_order;
-	isRaidLeader = settings.raid_lead_mode;
-	currentPlayer = settings.player_name;
-	soundAlerts = settings.sound_alerts;
-
 	// Get the index for the current player in the player order list (for sundering map)
-	if (!playerOrder.empty())
+	if (!settings.echo_player_order.empty())
 	{
-		const auto it = std::ranges::find(playerOrder, currentPlayer);
-		if (it != playerOrder.end())
-			destructionIndex = std::distance(playerOrder.begin(), it) + 1;
+		const auto it = std::ranges::find(settings.echo_player_order, settings.player_name);
+		if (it != settings.echo_player_order.end())
+			destructionIndex = std::distance(settings.echo_player_order.begin(), it) + 1;
 	}
 
 	const auto& logParser = BrainRot::getInstance().getLogParser();
@@ -45,6 +40,9 @@ EchoFight::EchoFight(const HWND wowWindow) :
 		Utils::RegexSplit(data.eventData, std::wregex(L","), std::back_inserter(tokens));
 		if (tokens.size() < 10) return;
 
+		const auto& settings = Settings::getInstance();
+		const auto& playerOrder = settings.echo_player_order;
+
 		//const auto& casterName = tokens[2];
 		const auto& targetName = tokens[6];
 		const auto& spellName = tokens[10];
@@ -60,7 +58,7 @@ EchoFight::EchoFight(const HWND wowWindow) :
 				if (!playerOrder.empty())
 				{
 					DEBUG_PRINTLN("Sorting volcanic heart players");
-					std::ranges::sort(volcanicHeartPlayers, [this](const std::wstring& a, const std::wstring& b) {
+					std::ranges::sort(volcanicHeartPlayers, [this, playerOrder](const std::wstring& a, const std::wstring& b) {
 						const auto itA = std::ranges::find(playerOrder, a);
 						const auto itB = std::ranges::find(playerOrder, b);
 
@@ -77,9 +75,9 @@ EchoFight::EchoFight(const HWND wowWindow) :
 					std::ranges::sort(volcanicHeartPlayers);
 
 				// If there are 5 people, read out which number the current player is
-				if (soundAlerts && volcanicHeartPlayers.size() >= 5)
+				if (settings.sound_alerts && volcanicHeartPlayers.size() >= 5)
 				{
-					const auto it = std::ranges::find(volcanicHeartPlayers, currentPlayer);
+					const auto it = std::ranges::find(volcanicHeartPlayers, settings.player_name);
 					if (it != volcanicHeartPlayers.end())
 					{
 						const auto index = std::distance(volcanicHeartPlayers.begin(), it) + 1;
@@ -124,16 +122,17 @@ EchoFight::EchoFight(const HWND wowWindow) :
 
 void EchoFight::drawFight()
 {
+	const auto& settings = Settings::getInstance();
 	if (isFocused)
 	{
 		if (ImGui::Begin("Echo", nullptr, WINDOW_FLAGS))
 		{
 			renderPlayers({
-				currentPlayer,
-				currentPlayer + L" A",
-				currentPlayer + L" B",
-				currentPlayer + L" C",
-				currentPlayer + L" D",
+				settings.player_name,
+				settings.player_name + L" A",
+				settings.player_name + L" B",
+				settings.player_name + L" C",
+				settings.player_name + L" D",
 			});
 		}
 		ImGui::End();
@@ -144,7 +143,7 @@ void EchoFight::drawFight()
 			renderIndex();
 		ImGui::End();
 	}
-	else if (!volcanicHeartPlayers.empty() && (isRaidLeader || std::ranges::find(volcanicHeartPlayers, currentPlayer) != volcanicHeartPlayers.end()))
+	else if (!volcanicHeartPlayers.empty() && (settings.raid_lead_mode || std::ranges::find(volcanicHeartPlayers, settings.player_name) != volcanicHeartPlayers.end()))
 	{
 		std::lock_guard lock(listMutex);
 		if (ImGui::Begin("Echo", nullptr, WINDOW_FLAGS))
@@ -158,12 +157,13 @@ void EchoFight::drawFight()
 void EchoFight::renderPlayers(const std::vector<std::wstring>& players) const
 {
 	// Render a card containing the player name and their number in the list
+	const auto& settings = Settings::getInstance();
 	for (size_t i = 0; i < players.size(); i++)
 	{
-		const bool isCurrentPlayer = currentPlayer == players[i];
-		if (!isCurrentPlayer && !isRaidLeader) continue;
+		const bool isCurrentPlayer = settings.player_name == players[i];
+		if (!isCurrentPlayer && !settings.raid_lead_mode) continue;
 
-		if (isRaidLeader)
+		if (settings.raid_lead_mode)
 		{
 			if (isCurrentPlayer) ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
 			// format string to 1. utf8encoded name
