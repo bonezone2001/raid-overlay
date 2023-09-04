@@ -34,3 +34,8 @@
 # IDE / Build
 .vs
 bins
+
+# Other shite
+gui_settings.ini
+imgui.ini
+settings.json

@@ -13,6 +13,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     ALLOC_DEBUG_CONSOLE();
 
+#ifndef _DEBUG
     if (Green::Utils::CheckForUpdates())
     {
         if (Green::Utils::UpdateInPlace())
@@ -21,8 +22,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             Green::Utils::Restart();
         }
     }
+#endif
 
-    Green::Settings::getInstance().load();
+    // Settings loading and sanity checking
+	try
+    {
+	    Green::Settings::getInstance().load();
+    }
+    catch (...)
+    {
+		MessageBox(NULL, L"Failed to load settings, if app has updated, please recreate settings.json", L"BrainRot", MB_OK);
+        return 1;
+	}
+
     auto& brainRot = Green::BrainRot::getInstance();
     brainRot.init();
     brainRot.start();

@@ -2,11 +2,11 @@
 
 #include <mutex>
 #include <vector>
-#include "../core/overlay.h"
+#include "base_fight.h"
 
 namespace Green {
 
-class EchoFight final : public Overlay
+class EchoFight final : public BaseFight
 {
 private:
 	bool isRaidLeader;
@@ -16,12 +16,13 @@ private:
 	std::wstring currentPlayer;
 	std::mutex listMutex;
 	int destructionIndex;
+	bool soundAlerts;
 
 public:
 	explicit EchoFight(HWND wowWindow);
 
 protected:
-	void draw() override;
+	void drawFight() override;
 	void renderPlayers(const std::vector<std::wstring>& players) const;
 	void renderIndex() const;
 };

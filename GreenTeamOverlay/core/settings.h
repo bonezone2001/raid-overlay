@@ -5,6 +5,10 @@
 #include "nlohmann/json.hpp"
 #include "../utils/utils.h"
 
+#define APP_SETTINGS_FILE_NAME "settings.json"
+#define PLAYER_NAME_MIN_LENGTH 3
+#define PLAYER_NAME_MAX_LENGTH 12
+
 namespace nlohmann {
     template <>
     struct adl_serializer<std::wstring> {
@@ -29,7 +33,7 @@ public:
     std::wstring wow_log_folder_override;
     std::vector<std::wstring> echo_player_order;
 	bool raid_lead_mode = false;
-
+    bool sound_alerts = true;
 
 private:
     bool createIfMissing(const std::string& path) const;
@@ -47,8 +51,9 @@ public:
 
     void load();
     void setInstance(const Settings& settings);
+    void save() const;
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Settings, player_name, wow_log_folder_override, log_file_name, raid_lead_mode, echo_player_order);
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Settings, player_name, wow_log_folder_override, log_file_name, raid_lead_mode, echo_player_order, sound_alerts);
 };
 
 }

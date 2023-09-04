@@ -39,5 +39,6 @@ namespace Green::Utils
 	void RegexSplit(const std::string& input, const std::regex& sepRegex, std::back_insert_iterator<std::vector<std::string>> resultIter);
 	void RegexSplit(const std::wstring& input, const std::wregex& sepRegex, std::back_insert_iterator<std::vector<std::wstring>> resultIter);
 	std::wstring ToLower(const std::wstring& str);
+	std::wstring GetClipboardText();
 	void Restart();
 }

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="modules\base_fight.cpp" />
     <ClCompile Include="utils\auto_update.cpp" />
     <ClCompile Include="brain_rot.cpp" />
     <ClCompile Include="core\settings.cpp" />
@@ -38,6 +39,7 @@
     <ClCompile Include="utils\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="modules\base_fight.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="utils\auto_update.h" />
     <ClInclude Include="brain_rot.h" />

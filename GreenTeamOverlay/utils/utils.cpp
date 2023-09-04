@@ -175,6 +175,40 @@ namespace Green::Utils
 		return result;
 	}
 
+	std::wstring GetClipboardText()
+	{
+		// Initialize the Windows clipboard
+		if (!OpenClipboard(nullptr)) {
+			// Handle clipboard error here
+			return L"";
+		}
+
+		// Get the clipboard data as Unicode text
+		const HANDLE hData = GetClipboardData(CF_UNICODETEXT);
+		if (hData == nullptr) {
+			// Handle clipboard data retrieval error here
+			CloseClipboard();
+			return L"";
+		}
+
+		// Lock the clipboard data and get a pointer to it
+		const wchar_t* pszText = static_cast<const wchar_t*>(GlobalLock(hData));
+		if (pszText == nullptr) {
+			// Handle clipboard locking error here
+			CloseClipboard();
+			return L"";
+		}
+
+		// Copy the clipboard text into a wstring (Unicode)
+		std::wstring clipboardText(pszText);
+
+		// Release the clipboard data and close the clipboard
+		GlobalUnlock(hData);
+		CloseClipboard();
+
+		return clipboardText;
+	}
+
 	void Restart()
 	{
 		// Restart the application

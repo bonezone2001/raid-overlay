@@ -5,12 +5,15 @@
 #include "../core/settings.h"
 #include "../log_parser/log_parser.h"
 
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
+
 #define WINDOW_FLAGS (ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize)
 
 namespace Green {
 
-EchoFight::EchoFight(HWND wowWindow) :
-	Overlay("Green Team Overlay", wowWindow),
+EchoFight::EchoFight(const HWND wowWindow) :
+	BaseFight("Echo Overlay", wowWindow),
 	activeDestruction(false),
 	destructionIndex(0)
 {
@@ -18,6 +21,7 @@ EchoFight::EchoFight(HWND wowWindow) :
 	playerOrder = settings.echo_player_order;
 	isRaidLeader = settings.raid_lead_mode;
 	currentPlayer = settings.player_name;
+	soundAlerts = settings.sound_alerts;
 
 	// Get the index for the current player in the player order list (for sundering map)
 	if (!playerOrder.empty())
@@ -71,6 +75,21 @@ EchoFight::EchoFight(HWND wowWindow) :
 				}
 				else
 					std::ranges::sort(volcanicHeartPlayers);
+
+				// If there are 5 people, read out which number the current player is
+				if (soundAlerts && volcanicHeartPlayers.size() >= 5)
+				{
+					const auto it = std::ranges::find(volcanicHeartPlayers, currentPlayer);
+					if (it != volcanicHeartPlayers.end())
+					{
+						const auto index = std::distance(volcanicHeartPlayers.begin(), it) + 1;
+						std::wstring command = L"play \"";
+						command += std::to_wstring(index);
+						command += L".wav\" from 0";
+						WDEBUG_PRINTLN(command);
+						mciSendString(command.c_str(), nullptr, 0, 0);
+					}
+				}
 			}
 			else
 			{
@@ -103,11 +122,11 @@ EchoFight::EchoFight(HWND wowWindow) :
 	});
 }
 
-void EchoFight::draw()
+void EchoFight::drawFight()
 {
 	if (isFocused)
 	{
-		if (ImGui::Begin("Green Team Overlay", nullptr, WINDOW_FLAGS))
+		if (ImGui::Begin("Echo", nullptr, WINDOW_FLAGS))
 		{
 			renderPlayers({
 				currentPlayer,
@@ -121,14 +140,14 @@ void EchoFight::draw()
 	}
 	else if (activeDestruction)
 	{
-		if (ImGui::Begin("Green Team Overlay", nullptr, WINDOW_FLAGS))
+		if (ImGui::Begin("Echo", nullptr, WINDOW_FLAGS))
 			renderIndex();
 		ImGui::End();
 	}
 	else if (!volcanicHeartPlayers.empty() && (isRaidLeader || std::ranges::find(volcanicHeartPlayers, currentPlayer) != volcanicHeartPlayers.end()))
 	{
 		std::lock_guard lock(listMutex);
-		if (ImGui::Begin("Green Team Overlay", nullptr, WINDOW_FLAGS))
+		if (ImGui::Begin("Echo", nullptr, WINDOW_FLAGS))
 		{
 			renderPlayers(volcanicHeartPlayers);
 		}

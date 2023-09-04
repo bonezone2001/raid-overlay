@@ -1,9 +1,8 @@
 #include "settings.h"
 #include <filesystem>
+#include <iostream>
 #include <Windows.h>
-#include "../utils/utils.h""
-
-#define APP_SETTINGS_FILE_NAME "settings.json"
+#include "../utils/utils.h"
 
 namespace Green
 {
@@ -55,6 +54,13 @@ void Settings::load()
 void Settings::setInstance(const Settings& settings)
 {
 	*this = settings;
+}
+
+void Settings::save() const
+{
+	const nlohmann::json j = *this;
+	const std::string data = j.dump(1, '\t');
+	Utils::SaveFileToDisk(APP_SETTINGS_FILE_NAME, data.c_str(), data.length());
 }
 
 }

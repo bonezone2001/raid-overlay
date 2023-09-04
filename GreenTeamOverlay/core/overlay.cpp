@@ -116,6 +116,10 @@ Overlay::Overlay(const std::string& name, HWND parentHWnd) :
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330 core");
 
+	// Set custom ImGui settings file name
+	ImGuiIO& io = ImGui::GetIO();
+	io.IniFilename = "gui_settings.ini";
+
 	initStyle();
 }
 
