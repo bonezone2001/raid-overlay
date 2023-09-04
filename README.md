@@ -23,7 +23,7 @@ If you wish to use the application, follow the bellow steps:
 
 `Note:` Most of the remaining steps can now be done inside the overlay under the settings window.   
 
-3. Modify the `settings.json` with your desired settings. MAKE SURE to fill out the `player_name` field with your in-game character name.
+3. Modify the `settings.json` with your desired settings. MAKE SURE to fill out the `player_name` field with your in-game character name (without realm. E.g OrcLover).
 
 4. Enter the player list in the order you wish to use for your raid team. (For Echo of Neltharion)
 
