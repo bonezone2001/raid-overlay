@@ -1,4 +1,4 @@
-# WoW Raid Overlay
+# WoW Raid Overlay [PATCHED AND ARCHIVED]
 
 A fast raid overlay that abuses the "Advanced Network Logging" feature in World of Warcraft to display information that weakauras cannot. This will be patched before the next season (season 3 dragonflight)
 
